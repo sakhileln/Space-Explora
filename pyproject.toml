@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "space-nomad"
+version = "0.1.0"
+description = "A simple space exploration web application."
+authors = ["Sakhile L. Ndlazi <sakhilelindah@gmail.com>"]
+license = "GPL-3.0 license"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
