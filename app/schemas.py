@@ -7,7 +7,8 @@ class MissionBase(BaseModel):
     descritption: str
 
 
-class MissionCreate(MissionBase): ...
+class MissionCreate(MissionBase):
+    ...
 
 
 class Mission(MissionBase):
