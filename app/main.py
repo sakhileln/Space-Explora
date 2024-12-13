@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from . import models, crud, schemas, database
-from .api import nasa, spacex
+from .api import spacex
 
 app = FastAPI()
 
@@ -33,7 +33,9 @@ def get_missions(db: Session = Depends(get_db)):
 
 
 @app.post("/missions/")
-def create_mission(mission: schemas.MissionCreate, db: Session = Depends(get_db)):
+def create_mission(
+    mission: schemas.MissionCreate, db: Session = Depends(get_db)
+):
     # Check if mission already exists
     existing_mission = crud.get_mission_by_name(db, mission.name)
     if existing_mission:
@@ -50,4 +52,6 @@ def spacex_launches():
     if launches:
         return launches
     else:
-        raise HTTPException(status_code=404, detail="SpaceX launches not found!")
+        raise HTTPException(
+            status_code=404, detail="SpaceX launches not found!"
+        )
