@@ -30,3 +30,15 @@ def read_root():
 def get_missions(db: Session = Depends(get_db)):
     missions = crud.get_missions(db)
     return missions
+
+
+@app.post("/missions/")
+def create_mission(mission: schemas.MissionCreate, db: Session = Depends(get_db)):
+    # Check if mission already exists
+    existing_mission = crud.get_mission_by_name(db, mission.name)
+    if existing_mission:
+        raise HTTPException(status_code=404, detail="Mission already exists")
+
+    # New mission
+    new_mission = crud.create_mission(db=db, mission=mission)
+    return new_mission
