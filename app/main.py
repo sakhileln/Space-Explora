@@ -24,3 +24,9 @@ def startup():
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Space Nomad!"}
+
+
+@app.get("/missions/")
+def get_missions(db: Session = Depends(get_db)):
+    missions = crud.get_missions(db)
+    return missions
