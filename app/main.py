@@ -37,8 +37,17 @@ def create_mission(mission: schemas.MissionCreate, db: Session = Depends(get_db)
     # Check if mission already exists
     existing_mission = crud.get_mission_by_name(db, mission.name)
     if existing_mission:
-        raise HTTPException(status_code=404, detail="Mission already exists")
+        raise HTTPException(status_code=400, detail="Mission already exists")
 
     # New mission
     new_mission = crud.create_mission(db=db, mission=mission)
     return new_mission
+
+
+@app.get("/spacex-launches/")
+def spacex_launches():
+    launches = spacex.get_spacex_launches()
+    if launches:
+        return launches
+    else:
+        raise HTTPException(status_code=404, detail="SpaceX launches not found!")
