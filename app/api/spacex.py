@@ -24,8 +24,13 @@ def get_spacex_launches():
         list: A list of dictionaries where each dictionary represents a SpaceX launch.
               If the request fails or the status code is not 200, None is returned.
     """
-    response = requests.get(SPACE_API_URL)
-    if response.status_code == 200:
-        return response.json()
-    
+    try:
+        response = requests.get(SPACE_API_URL)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.Timeout:
+        print("The request timed out.")
+    except requests.exceptions.RequestException as e:
+        print("An error occured: {e}")
+
     return None
