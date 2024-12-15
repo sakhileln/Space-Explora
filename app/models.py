@@ -28,6 +28,7 @@ class Mission(Base):
         status (str): The status of the mission.
         description (str): The description of the mission.
     """
+
     __tablename__ = "missions"
 
     id = Column(Integer, primary_key=True, index=True)
