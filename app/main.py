@@ -110,7 +110,7 @@ def spacex_launches():
     Raises:
         HTTPException: If no SpaceX launches are found.
     """
-    launches = spacex.get_spacex_launches()
+    launches = spacex.spacex_data
     if launches:
         return launches
 
