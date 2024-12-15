@@ -35,8 +35,15 @@ def get_nasa_apod():
             "url": "https://example.com/astronomy-image.jpg"
         }
     """
-    response = requests.get(NASA_API_URL, params={"api_key": NASA_API_KEY})
-    if response.status_code == 200:
-        return response.json()
-    
+    try:
+        response = requests.get(
+            NASA_API_URL, params={"api_key": NASA_API_KEY}, timeout=10
+        )
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.Timeout:
+        print("The request timed out.")
+    except requests.exceptions.RequestException as e:
+        print(f"An error occured: {e}")
+
     return None
