@@ -25,12 +25,12 @@ def get_spacex_launches():
               If the request fails or the status code is not 200, None is returned.
     """
     try:
-        response = requests.get(SPACE_API_URL)
+        response = requests.get(SPACE_API_URL, timeout=10)
         if response.status_code == 200:
             return response.json()
     except requests.exceptions.Timeout:
         print("The request timed out.")
     except requests.exceptions.RequestException as e:
-        print("An error occured: {e}")
+        print(f"An error occured: {e}")
 
     return None
