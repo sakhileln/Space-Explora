@@ -11,6 +11,7 @@ Models:
     - MissionCreate: Model used when creating a new mission.
     - Mission: Model that includes the mission ID, used for returning mission data.
 """
+
 from pydantic import BaseModel
 
 
@@ -27,6 +28,7 @@ class MissionBase(BaseModel):
         status (str): The status of the mission.
         description (str): The description of the mission.
     """
+
     name: str
     status: str
     descritption: str
@@ -56,8 +58,11 @@ class Mission(MissionBase):
     Config:
         orm_mode (bool): Tells Pydantic to treat ORM models as dictionaries.
     """
+
     id: int
+
     # pylint: disable=too-few-public-methods
     class Config:
         """Tell Pydantic to treat ORM models as dictionaries."""
+
         orm_mode = True
