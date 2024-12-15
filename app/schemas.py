@@ -40,7 +40,6 @@ class MissionCreate(MissionBase):
     new missions, and may not include an ID since it is only required when
     retrieving or updating existing records.
     """
-    ...
 
 
 class Mission(MissionBase):
@@ -58,7 +57,7 @@ class Mission(MissionBase):
         orm_mode (bool): Tells Pydantic to treat ORM models as dictionaries.
     """
     id: int
-
+    # pylint: disable=too-few-public-methods
     class Config:
         """Tell Pydantic to treat ORM models as dictionaries."""
         orm_mode = True
