@@ -49,3 +49,17 @@ def make_api_request(url, api_key: str = None):
         print(f"An error occurred: {e}")
 
     return None
+
+
+def parse_mission_data(api_response):
+    """
+    Parse API response to extract relevant mission details.
+    """
+    missions = []
+    for mission in api_response:
+        missions.append({
+            "name": mission.get("mission_name"),
+            "status": mission.get("launch_success"),
+            "description": mission.get("details", "No description available."),
+        })
+    return missions
