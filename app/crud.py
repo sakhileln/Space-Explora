@@ -15,6 +15,18 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 
 
+def get_filtered_missions(db, page, size, start_date, end_date, keyword):
+    query = db.query(models.Mission)
+    if start_date:
+        query = query.filter(models.Mission.date >= start_date)
+    if end_date:
+        query = query.filter(models.Mission.date <= end_date)
+    if keyword:
+        query = query.filter(models.Mission.name.contains(keyword))
+    return query.offset((page - 1) * size).limit(size).all()
+
+
+
 def create_mission(db: Session, mission: schemas.MissionCreate):
     """
     Creates a new mission and adds it to the database.
