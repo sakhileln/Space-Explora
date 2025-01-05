@@ -57,11 +57,27 @@ async def load_initial_data():
 @app.on_event("startup")
 @repeat_every(seconds=3600)  # Runs every hour
 def periodic_mission_update() -> None:
+    """
+    Periodically updates SpaceX mission data every hour.
+
+    This function is triggered on the application startup and runs at specified intervals
+    to fetch and update mission data from the SpaceX API.
+    """
     db = next(get_db())
     update_spacex_data(db)
 
 
 def update_spacex_data(db: Session):
+    """
+    Updates SpaceX mission data in the database.
+
+    Args:
+        db (Session): The database session to use for updating mission data.
+
+    This function retrieves mission data from the SpaceX API, parses it,
+    and creates or updates mission records in the database. Invalid missions
+    are skipped and logged.
+    """
     spacex_response = spacex.spacex_data
     if not spacex_response:
         print("No response from SpaceX API.")
