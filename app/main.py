@@ -50,8 +50,10 @@ async def load_initial_data():
     db = next(get_db())
     try:
         update_spacex_data(db)
-    except Exception as e:
-        print(f"Error loading initial SpaceX data: {e}")
+    except ConnectionError as ce:
+        print(f"Connection error occured loading SpaceX data: {ce}")
+    except ValueError as ve:
+        print(f"Value Error loading initial SpaceX data: {ve}")
 
 
 @app.on_event("startup")
