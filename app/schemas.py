@@ -33,7 +33,7 @@ class MissionBase(BaseModel):
 
     name: str
     status: str
-    description: str
+    description: Optional[str] = "No description available."
     launch_date: Optional[datetime] = None
 
 
