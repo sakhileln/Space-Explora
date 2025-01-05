@@ -59,11 +59,18 @@ def periodic_mission_update() -> None:
 
 
 def update_spacex_data(db: Session):
-    spacex_response = spacex.spacex_data # make_api_request(SPACEX_API_URL)
-    if spacex_response:
-        spacex_missions =  make_api_request.parse_mission_data(spacex_response)
-        for mission in spacex_missions:
-            crud.create_or_update_mission(db, mission)
+    spacex_response = spacex.spacex_data
+    if not spacex_response:
+        print("No response from SpaceX API.")
+        return
+
+    spacex_missions = make_api_request.parse_mission_data(spacex_response)
+    for mission in spacex_missions:
+        if not mission.get("name") or not mission.get("status"):
+            print(f"Invalid mission data: {mission}")
+            continue  # Skip invalid missions
+
+        crud.create_or_update_mission(db, mission)
 
 @app.get("/")
 def read_root():
