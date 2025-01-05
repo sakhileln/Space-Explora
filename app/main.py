@@ -74,19 +74,21 @@ def trigger_spacex_update(background_tasks: BackgroundTasks, db: Session = Depen
     return {"message": "SpaceX missions update initiated."}
 
 @app.get("/missions/")
-def get_missions(db: Session = Depends(get_db)):
+def get_missions(
+    db: Session = Depends(get_db),
+    page: int = 1,
+    size: int = 10,
+    start_date: str = None,
+    end_date: str = None,
+    keyword: str = None,
+    ):
     """
-    Get all space missions stored in the database.
-
-    Args:
-        db (Session): The database session, provided by dependency injection.
-
-    Returns:
-        list: A list of missions from the database.
+    Fetch missions with pagination and optional filtering.
     """
-    missions = crud.get_missions(db)
-    return missions
-
+    missions = crud.get_filtered_missions(
+        db, page, size, start_date, end_date, keyword
+    )
+    return {"missions": missions, "page": page, "size": size}
 
 @app.post("/missions/")
 def create_mission(mission: schemas.MissionCreate, db: Session = Depends(get_db)):
