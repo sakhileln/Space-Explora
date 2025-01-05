@@ -18,13 +18,26 @@ from . import models, schemas
 def get_filtered_missions(db, page, size, start_date, end_date, keyword):
     query = db.query(models.Mission)
     if start_date:
-        query = query.filter(models.Mission.date >= start_date)
+        query = query.filter(models.Mission.launch_date >= start_date)
     if end_date:
-        query = query.filter(models.Mission.date <= end_date)
+        query = query.filter(models.Mission.launch_date <= end_date)
     if keyword:
         query = query.filter(models.Mission.name.contains(keyword))
     return query.offset((page - 1) * size).limit(size).all()
 
+
+def create_or_update_mission(db: Session, mission_data: dict):
+    existing_mission = db.query(models.Mission).filter(models.Mission.name == mission_data["name"]).first()
+    if existing_mission:
+        # Update existing mission
+        for key, value in mission_data.items():
+            setattr(existing_mission, key, value)
+        db.commit()
+        db.refresh(existing_mission)
+        return existing_mission
+    else:
+        # Create new mission
+        return create_mission(db, schemas.MissionCreate(**mission_data))
 
 
 def create_mission(db: Session, mission: schemas.MissionCreate):
