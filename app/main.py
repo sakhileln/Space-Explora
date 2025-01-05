@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session
 from . import models, crud, schemas, database
 from .api import spacex
 from .api.make_api_requests import make_api_request, parse_mission_data
+from fastapi_utils.tasks import repeat_every
 
 app = FastAPI()
 
@@ -46,6 +47,13 @@ async def load_initial_data():
     """
     db = next(get_db())
     update_spacex_data(db)
+
+@app.on_event("startup")
+@repeat_every(seconds=3600)  # Runs every hour
+def periodic_mission_update() -> None:
+    db = next(get_db())
+    update_spacex_data(db)
+
 
 def update_spacex_data(db: Session):
     spacex_response = spacex.spacex_data # make_api_request(SPACEX_API_URL)
