@@ -17,6 +17,7 @@ from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from . import models, crud, schemas, database
 from .api import spacex, make_api_request
+
 # from .api.make_api_requests import make_api_request, parse_mission_data
 from fastapi_utils.tasks import repeat_every
 
@@ -51,6 +52,7 @@ async def load_initial_data():
     except Exception as e:
         print(f"Error loading initial SpaceX data: {e}")
 
+
 @app.on_event("startup")
 @repeat_every(seconds=3600)  # Runs every hour
 def periodic_mission_update() -> None:
@@ -72,6 +74,7 @@ def update_spacex_data(db: Session):
 
         crud.create_or_update_mission(db, mission)
 
+
 @app.get("/")
 def read_root():
     """
@@ -83,14 +86,18 @@ def read_root():
     """
     return {"message": "Welcome to Space Nomad!"}
 
+
 @app.post("/update-missions/")
-def trigger_spacex_update(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+def trigger_spacex_update(
+    background_tasks: BackgroundTasks, db: Session = Depends(get_db)
+):
     """
     Trigger a manual update for SpaceX missions.
     Runs in the background to avoid blocking the request.
     """
     background_tasks.add_task(update_spacex_data, db)
     return {"message": "SpaceX missions update initiated."}
+
 
 @app.get("/missions/")
 def get_missions(
@@ -100,14 +107,13 @@ def get_missions(
     start_date: str = None,
     end_date: str = None,
     keyword: str = None,
-    ):
+):
     """
     Fetch missions with pagination and optional filtering.
     """
-    missions = crud.get_filtered_missions(
-        db, page, size, start_date, end_date, keyword
-    )
+    missions = crud.get_filtered_missions(db, page, size, start_date, end_date, keyword)
     return {"missions": missions, "page": page, "size": size}
+
 
 @app.post("/missions/")
 def create_mission(mission: schemas.MissionCreate, db: Session = Depends(get_db)):
