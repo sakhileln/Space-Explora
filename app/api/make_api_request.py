@@ -53,13 +53,20 @@ def make_api_request(url, api_key: str = None):
 
 def parse_mission_data(api_response):
     """
-    Parse API response to extract relevant mission details.
+    Parse API response and ensure all required fields are present.
     """
     missions = []
     for mission in api_response:
+        name = mission.get("mission_name")
+        status = mission.get("launch_success")
+        description = mission.get("details", "No description available.")
+        if name is None or status is None:
+            continue  # Skip missions with missing critical fields
+
         missions.append({
-            "name": mission.get("mission_name"),
-            "status": mission.get("launch_success"),
-            "description": mission.get("details", "No description available."),
+            "name": name,
+            "status": "Success" if status else "Failure",
+            "description": description,
         })
     return missions
+
