@@ -13,7 +13,7 @@ The app initializes the database tables on startup and provides an HTTP interfac
 for users to interact with the system.
 """
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from . import models, crud, schemas, database
 from .api import spacex
@@ -38,13 +38,20 @@ def get_db():
 
 
 @app.on_event("startup")
-def startup():
+async def load_initial_data():
     """
     FastAPI startup event handler.
     This function creates all tables in the database upon server startup.
     """
-    models.Base.metadata.create_all(bind=database.engine)
+    db = next(get_db())
+    update_spacex_data(db)
 
+def update_spacex_data(db: Session):
+    spacex_data = spacex.fetch_spacex_missions()  # Fetch latest SpaceX missions
+    for mission in spacex_data:
+        existing_mission = crud.get_mission_by_name(db, mission["name"])
+        if not existing_mission:
+            crud.create_mission(db, mission)
 
 @app.get("/")
 def read_root():
@@ -57,6 +64,14 @@ def read_root():
     """
     return {"message": "Welcome to Space Nomad!"}
 
+@app.post("/update-missions/")
+def trigger_spacex_update(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    """
+    Trigger a manual update for SpaceX missions.
+    Runs in the background to avoid blocking the request.
+    """
+    background_tasks.add_task(update_spacex_data, db)
+    return {"message": "SpaceX missions update initiated."}
 
 @app.get("/missions/")
 def get_missions(db: Session = Depends(get_db)):
