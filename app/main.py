@@ -15,7 +15,7 @@ for users to interact with the system.
 
 from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
-from . import models, crud, schemas, database
+from . import crud, schemas, database
 from .api import spacex, make_api_request
 
 # from .api.make_api_requests import make_api_request, parse_mission_data
