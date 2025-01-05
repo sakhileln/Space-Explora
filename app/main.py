@@ -46,7 +46,10 @@ async def load_initial_data():
     This function creates all tables in the database upon server startup.
     """
     db = next(get_db())
-    update_spacex_data(db)
+    try:
+        update_spacex_data(db)
+    except Exception as e:
+        print(f"Error loading initial SpaceX data: {e}")
 
 @app.on_event("startup")
 @repeat_every(seconds=3600)  # Runs every hour
