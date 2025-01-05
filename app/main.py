@@ -16,8 +16,8 @@ for users to interact with the system.
 from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from . import models, crud, schemas, database
-from .api import spacex
-from .api.make_api_requests import make_api_request, parse_mission_data
+from .api import spacex, make_api_request
+# from .api.make_api_requests import make_api_request, parse_mission_data
 from fastapi_utils.tasks import repeat_every
 
 app = FastAPI()
@@ -58,7 +58,7 @@ def periodic_mission_update() -> None:
 def update_spacex_data(db: Session):
     spacex_response = spacex.spacex_data # make_api_request(SPACEX_API_URL)
     if spacex_response:
-        spacex_missions = parse_mission_data(spacex_response)
+        spacex_missions =  make_api_request.parse_mission_data(spacex_response)
         for mission in spacex_missions:
             crud.create_or_update_mission(db, mission)
 
