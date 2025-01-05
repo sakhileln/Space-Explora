@@ -19,7 +19,7 @@ from . import models, schemas
 # pylint: disable=too-many-positional-arguments
 def get_filtered_missions(
     db, page, size, start_date, end_date, keyword, sort_by=None, sort_order="asc"
-    ):
+):
     """
     Retrieves a filtered list of missions from the database.
 
@@ -75,7 +75,7 @@ def create_or_update_mission(db: Session, mission_data: dict):
         db.commit()
         db.refresh(existing_mission)
         return existing_mission
-    
+
     # Create new mission
     return create_mission(db, schemas.MissionCreate(**mission_data))
 
