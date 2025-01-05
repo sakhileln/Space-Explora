@@ -68,4 +68,5 @@ class Mission(MissionBase):
     class Config:
         """Tell Pydantic to treat ORM models as dictionaries."""
 
-        orm_mode = True
+        # orm_mode = True
+        from_attributes = True
