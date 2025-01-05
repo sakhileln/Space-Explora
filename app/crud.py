@@ -15,7 +15,9 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 
 
-def get_filtered_missions(db, page, size, start_date, end_date, keyword, sort_by=None, sort_order="asc"):
+def get_filtered_missions(
+    db, page, size, start_date, end_date, keyword, sort_by=None, sort_order="asc"
+):
     query = db.query(models.Mission)
     if start_date:
         query = query.filter(models.Mission.launch_date >= start_date)
@@ -26,12 +28,18 @@ def get_filtered_missions(db, page, size, start_date, end_date, keyword, sort_by
     if sort_by:
         sort_column = getattr(models.Mission, sort_by, None)
         if sort_column:
-            query = query.order_by(sort_column.asc() if sort_order == "asc" else sort_column.desc())
+            query = query.order_by(
+                sort_column.asc() if sort_order == "asc" else sort_column.desc()
+            )
     return query.offset((page - 1) * size).limit(size).all()
 
 
 def create_or_update_mission(db: Session, mission_data: dict):
-    existing_mission = db.query(models.Mission).filter(models.Mission.name == mission_data["name"]).first()
+    existing_mission = (
+        db.query(models.Mission)
+        .filter(models.Mission.name == mission_data["name"])
+        .first()
+    )
     if existing_mission:
         # Update existing mission
         for key, value in mission_data.items():
