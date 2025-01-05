@@ -17,6 +17,7 @@ from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from . import models, crud, schemas, database
 from .api import spacex
+from .api.make_api_requests import make_api_request, parse_mission_data
 
 app = FastAPI()
 
@@ -47,11 +48,11 @@ async def load_initial_data():
     update_spacex_data(db)
 
 def update_spacex_data(db: Session):
-    spacex_data = spacex.fetch_spacex_missions()  # Fetch latest SpaceX missions
-    for mission in spacex_data:
-        existing_mission = crud.get_mission_by_name(db, mission["name"])
-        if not existing_mission:
-            crud.create_mission(db, mission)
+    spacex_response = spacex.spacex_data # make_api_request(SPACEX_API_URL)
+    if spacex_response:
+        spacex_missions = parse_mission_data(spacex_response)
+        for mission in spacex_missions:
+            crud.create_or_update_mission(db, mission)
 
 @app.get("/")
 def read_root():
