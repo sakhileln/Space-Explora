@@ -101,6 +101,8 @@ def trigger_spacex_update(
 
 
 @app.get("/missions/")
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-positional-arguments
 def get_missions(
     db: Session = Depends(get_db),
     page: int = 1,
