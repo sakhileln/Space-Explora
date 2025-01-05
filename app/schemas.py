@@ -12,6 +12,7 @@ Models:
     - Mission: Model that includes the mission ID, used for returning mission data.
 """
 
+from datetime import datetime
 from pydantic import BaseModel
 
 
@@ -31,7 +32,8 @@ class MissionBase(BaseModel):
 
     name: str
     status: str
-    descritption: str
+    description: str
+    launch_date: Optional[datetime] = None
 
 
 class MissionCreate(MissionBase):
