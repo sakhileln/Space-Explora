@@ -63,10 +63,11 @@ def parse_mission_data(api_response):
         if name is None or status is None:
             continue  # Skip missions with missing critical fields
 
-        missions.append({
-            "name": name,
-            "status": "Success" if status else "Failure",
-            "description": description,
-        })
+        missions.append(
+            {
+                "name": name,
+                "status": "Success" if status else "Failure",
+                "description": description,
+            }
+        )
     return missions
-
