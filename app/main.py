@@ -13,10 +13,13 @@ The app initializes the database tables on startup and provides an HTTP interfac
 for users to interact with the system.
 """
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
+from fastapi_utils.tasks import repeat_every
 from sqlalchemy.orm import Session
-from . import models, crud, schemas, database
-from .api import spacex
+
+from . import crud, schemas, database
+from .api import spacex, make_api_request
+
 
 app = FastAPI()
 
@@ -38,12 +41,56 @@ def get_db():
 
 
 @app.on_event("startup")
-def startup():
+async def load_initial_data():
     """
     FastAPI startup event handler.
     This function creates all tables in the database upon server startup.
     """
-    models.Base.metadata.create_all(bind=database.engine)
+    db = next(get_db())
+    try:
+        update_spacex_data(db)
+    except ConnectionError as ce:
+        print(f"Connection error occured loading SpaceX data: {ce}")
+    except ValueError as ve:
+        print(f"Value Error loading initial SpaceX data: {ve}")
+
+
+@app.on_event("startup")
+@repeat_every(seconds=3600)  # Runs every hour
+def periodic_mission_update() -> None:
+    """
+    Periodically updates SpaceX mission data every hour.
+
+    This function is triggered on the application startup and runs at specified intervals
+    to fetch and update mission data from the SpaceX API.
+    """
+    db = next(get_db())
+    update_spacex_data(db)
+
+
+def update_spacex_data(db: Session):
+    """
+    Updates SpaceX mission data in the database.
+
+    Args:
+        db (Session): The database session to use for updating mission data.
+
+    This function retrieves mission data from the SpaceX API, parses it,
+    and creates or updates mission records in the database. Invalid missions
+    are skipped and logged.
+    """
+    spacex_response = spacex.spacex_data
+    if not spacex_response:
+        print("No response from SpaceX API.")
+        return
+
+    spacex_missions = make_api_request.parse_mission_data(spacex_response)
+    for mission in spacex_missions:
+        if not mission.get("name") or not mission.get("status"):
+            print(f"Invalid mission data: {mission}")
+            continue  # Skip invalid missions
+
+        crud.create_or_update_mission(db, mission)
 
 
 @app.get("/")
@@ -58,19 +105,34 @@ def read_root():
     return {"message": "Welcome to Space Nomad!"}
 
 
+@app.post("/update-missions/")
+def trigger_spacex_update(
+    background_tasks: BackgroundTasks, db: Session = Depends(get_db)
+):
+    """
+    Trigger a manual update for SpaceX missions.
+    Runs in the background to avoid blocking the request.
+    """
+    background_tasks.add_task(update_spacex_data, db)
+    return {"message": "SpaceX missions update initiated."}
+
+
 @app.get("/missions/")
-def get_missions(db: Session = Depends(get_db)):
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-positional-arguments
+def get_missions(
+    db: Session = Depends(get_db),
+    page: int = 1,
+    size: int = 10,
+    start_date: str = None,
+    end_date: str = None,
+    keyword: str = None,
+):
     """
-    Get all space missions stored in the database.
-
-    Args:
-        db (Session): The database session, provided by dependency injection.
-
-    Returns:
-        list: A list of missions from the database.
+    Fetch missions with pagination and optional filtering.
     """
-    missions = crud.get_missions(db)
-    return missions
+    missions = crud.get_filtered_missions(db, page, size, start_date, end_date, keyword)
+    return {"missions": missions, "page": page, "size": size}
 
 
 @app.post("/missions/")

@@ -12,6 +12,9 @@ Models:
     - Mission: Model that includes the mission ID, used for returning mission data.
 """
 
+from datetime import datetime
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -31,7 +34,8 @@ class MissionBase(BaseModel):
 
     name: str
     status: str
-    descritption: str
+    description: Optional[str] = "No description available."
+    launch_date: Optional[datetime] = None
 
 
 class MissionCreate(MissionBase):
@@ -65,4 +69,5 @@ class Mission(MissionBase):
     class Config:
         """Tell Pydantic to treat ORM models as dictionaries."""
 
-        orm_mode = True
+        # orm_mode = True
+        from_attributes = True
