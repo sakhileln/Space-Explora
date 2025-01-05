@@ -47,9 +47,9 @@ def create_or_update_mission(db: Session, mission_data: dict):
         db.commit()
         db.refresh(existing_mission)
         return existing_mission
-    else:
-        # Create new mission
-        return create_mission(db, schemas.MissionCreate(**mission_data))
+    
+    # Create new mission
+    return create_mission(db, schemas.MissionCreate(**mission_data))
 
 
 def create_mission(db: Session, mission: schemas.MissionCreate):
