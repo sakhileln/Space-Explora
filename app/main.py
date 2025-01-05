@@ -21,7 +21,6 @@ from . import crud, schemas, database
 from .api import spacex, make_api_request
 
 
-
 app = FastAPI()
 
 
