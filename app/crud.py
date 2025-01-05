@@ -17,7 +17,23 @@ from . import models, schemas
 
 def get_filtered_missions(
     db, page, size, start_date, end_date, keyword, sort_by=None, sort_order="asc"
-):
+    ):
+    """
+    Retrieves a filtered list of missions from the database.
+
+    Args:
+        db: The database session.
+        page (int): The page number for pagination.
+        size (int): The number of missions to return per page.
+        start_date (datetime): The earliest launch date to filter missions.
+        end_date (datetime): The latest launch date to filter missions.
+        keyword (str): A keyword to filter mission names.
+        sort_by (str, optional): The column name to sort by.
+        sort_order (str, optional): The order of sorting ('asc' or 'desc'). Defaults to 'asc'.
+
+    Returns:
+        List[models.Mission]: A list of missions matching the specified filters and pagination.
+    """
     query = db.query(models.Mission)
     if start_date:
         query = query.filter(models.Mission.launch_date >= start_date)
@@ -35,6 +51,16 @@ def get_filtered_missions(
 
 
 def create_or_update_mission(db: Session, mission_data: dict):
+    """
+    Creates a new mission or updates an existing one in the database.
+
+    Args:
+        db (Session): The database session to use for the operation.
+        mission_data (dict): A dictionary containing mission data.
+
+    Returns:
+        models.Mission: The created or updated mission object.
+    """
     existing_mission = (
         db.query(models.Mission)
         .filter(models.Mission.name == mission_data["name"])
