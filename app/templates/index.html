@@ -26,6 +26,11 @@
             text-align: center;
         }
 
+        .stats {
+            margin-top: 30px;
+            font-size: 1.2em;
+        }
+
         footer {
             position: fixed;
             bottom: 0;
@@ -42,7 +47,15 @@
         <h1>Welcome to Space Nomad!</h1>
     </header>
     <main>
-        <p>Explore SpaceX and NASA launches and manage space missions efficiently.</p>
+        <p>Explore SpaceX launches and manage space missions efficiently.</p>
+
+        <div class="stats">
+            <h2>Space Facts</h2>
+            <p>Total Missions: {{ total_missions }}</p>
+            <p>Completed Missions: {{ completed_missions }}</p>
+            <p>Ongoing Missions: {{ ongoing_missions }}</p>
+            <p>Fun Fact: {{ fun_fact }}</p>
+        </div>
         <a href="/docs" style="color: #45a29e; text-decoration: none;">API Documentation</a>
     </main>
     <footer>
