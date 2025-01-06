@@ -13,8 +13,10 @@ The app initializes the database tables on startup and provides an HTTP interfac
 for users to interact with the system.
 """
 
-from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
+from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks, Request
 from fastapi_utils.tasks import repeat_every
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
 from . import crud, schemas, database
@@ -22,6 +24,8 @@ from .api import spacex, make_api_request
 
 
 app = FastAPI()
+# Setup templates
+templates = Jinja2Templates(directory="app/templates")
 
 
 # Dependency to get database session
@@ -104,6 +108,10 @@ def read_root():
     """
     return {"message": "Welcome to Space Nomad!"}
 
+
+@app.get("/index", response_class=HTMLResponse)
+def read_home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/update-missions/")
 def trigger_spacex_update(
