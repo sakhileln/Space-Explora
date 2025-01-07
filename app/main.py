@@ -15,10 +15,16 @@ for users to interact with the system.
 
 import random
 
-from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks, Request
-from fastapi_utils.tasks import repeat_every
-from fastapi.templating import Jinja2Templates
+from fastapi import (
+    FastAPI,
+    Depends,
+    HTTPException,
+    BackgroundTasks,
+    Request,
+)
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi_utils.tasks import repeat_every
 from sqlalchemy.orm import Session
 
 from . import crud, schemas, database
