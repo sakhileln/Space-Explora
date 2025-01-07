@@ -13,7 +13,17 @@ The app initializes the database tables on startup and provides an HTTP interfac
 for users to interact with the system.
 """
 
-from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
+import random
+
+from fastapi import (
+    FastAPI,
+    Depends,
+    HTTPException,
+    BackgroundTasks,
+    Request,
+)
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from fastapi_utils.tasks import repeat_every
 from sqlalchemy.orm import Session
 
@@ -22,6 +32,8 @@ from .api import spacex, make_api_request
 
 
 app = FastAPI()
+# Setup templates
+templates = Jinja2Templates(directory="app/templates")
 
 
 # Dependency to get database session
@@ -103,6 +115,51 @@ def read_root():
         dict: A dictionary with a welcome message.
     """
     return {"message": "Welcome to Space Nomad!"}
+
+
+# Fun space facts to display
+FUN_FACTS = [
+    "The sun is 330,000 times more massive than Earth!",
+    "One day on Venus is longer than a year on Venus.",
+    "The Milky Way has over 200 billion stars.",
+    "Space is completely silent because there's no air.",
+    "Jupiter's Great Red Spot is a massive storm that has raged for hundreds of years.",
+]
+
+
+@app.get("/index", response_class=HTMLResponse)
+def read_home(request: Request):
+    """
+    Fetch the home page with fun facts and latest space news
+    """
+    db = next(get_db())
+    # Fetch mission stats
+    missions = crud.get_missions(db, limit=100)
+    total_missions = len(missions)
+    completed_missions = len([m for m in missions if m.status.lower() == "completed"])
+    ongoing_missions = len([m for m in missions if m.status.lower() == "ongoing"])
+
+    # Random fact
+    fun_fact = random.choice(FUN_FACTS)
+
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "total_missions": total_missions,
+            "completed_missions": completed_missions,
+            "ongoing_missions": ongoing_missions,
+            "fun_fact": fun_fact,
+        },
+    )
+
+
+@app.get("/news/", response_class=HTMLResponse)
+def fetch_space_news(request: Request):
+    """
+    Fetch the latest space news with pagination.
+    """
+    return templates.TemplateResponse("news.html", {"request": request})
 
 
 @app.post("/update-missions/")
