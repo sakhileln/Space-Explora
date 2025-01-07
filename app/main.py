@@ -145,6 +145,14 @@ def read_home(request: Request):
     )
 
 
+@app.get("/news/", response_class=HTMLResponse)
+def fetch_space_news(request: Request):
+    """
+    Fetch the latest space news with pagination.
+    """
+    return templates.TemplateResponse("news.html", {"request": request})
+
+
 @app.post("/update-missions/")
 def trigger_spacex_update(
     background_tasks: BackgroundTasks, db: Session = Depends(get_db)
