@@ -31,6 +31,17 @@
             font-size: 1.2em;
         }
 
+        .news-link {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 15px 25px;
+            font-size: 1.2em;
+            color: #fff;
+            text-decoration: none;
+            background-color: #45a29e;
+            border-radius: 5px;
+        }
+
         footer {
             position: fixed;
             bottom: 0;
@@ -47,7 +58,7 @@
         <h1>Welcome to Space Nomad!</h1>
     </header>
     <main>
-        <p>Explore SpaceX, NASA launches and manage space missions efficiently.</p>
+        <p>Explore SpaceX, NASA launches, and manage space missions efficiently.</p>
 
         <div class="stats">
             <h2>Space Facts</h2>
@@ -56,7 +67,8 @@
             <p>Ongoing Missions: {{ ongoing_missions }}</p>
             <p>Fun Fact: {{ fun_fact }}</p>
         </div>
-        
+
+        <a class="news-link" href="/news">Read the Latest Space News</a>
     </main>
     <footer>
         <p>&copy; 2025 Space Nomad. All Rights Reserved.</p>
