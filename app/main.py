@@ -123,6 +123,9 @@ FUN_FACTS = [
 
 @app.get("/index", response_class=HTMLResponse)
 def read_home(request: Request):
+    """
+    Fetch the home page with fun facts and latest space news
+    """
     db = next(get_db())
     # Fetch mission stats
     missions = crud.get_missions(db, limit=100)
