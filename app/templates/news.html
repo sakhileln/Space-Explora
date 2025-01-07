@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space News</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0b0c10;
+            color: #c5c6c7;
+            text-align: center;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background: #1f2833;
+            color: #66fcf1;
+        }
+
+        .news-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .news-article {
+            text-align: left;
+            margin: 20px auto;
+            padding: 15px;
+            border-bottom: 1px solid #45a29e;
+            background: #1f2833;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .news-article h3 {
+            margin: 10px 0;
+            color: #66fcf1;
+        }
+
+        .news-article img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .news-article p {
+            margin: 10px 0;
+            color: #c5c6c7;
+        }
+
+        .pagination-controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .pagination-controls button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background: #45a29e;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .pagination-controls button:hover {
+            background: #66fcf1;
+        }
+
+        .pagination-controls button:disabled {
+            background: #gray;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Latest Space News</h1>
+    </header>
+
+    <div class="news-container" id="news-container">
+        <p>Loading news...</p>
+    </div>
+
+    <div class="pagination-controls" id="pagination-controls">
+        <button id="prev-page" disabled>Previous</button>
+        <button id="next-page">Next</button>
+    </div>
+
+    <script>
+        const newsContainer = document.getElementById("news-container");
+        const prevPageButton = document.getElementById("prev-page");
+        const nextPageButton = document.getElementById("next-page");
+        let currentPage = 1;
+
+        async function fetchNews(page = 1) {
+            const limit = 10;
+            const offset = (page - 1) * limit;
+            const url = `https://api.spaceflightnewsapi.net/v4/articles/?limit=${limit}&offset=${offset}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Failed to fetch news data.");
+                const data = await response.json();
+
+                displayNews(data.results);
+                updatePagination(data.previous, data.next);
+            } catch (error) {
+                newsContainer.innerHTML = `<p>Error loading news: ${error.message}</p>`;
+            }
+        }
+
+        function displayNews(articles) {
+            if (articles.length === 0) {
+                newsContainer.innerHTML = "<p>No news articles available.</p>";
+                return;
+            }
+
+            newsContainer.innerHTML = articles.map(article => `
+                    <div class="news-article">
+                        <img src="${article.image_url}" alt="${article.title}">
+                        <h3>${article.title}</h3>
+                        <p>${article.summary}</p>
+                        <a href="${article.url}" target="_blank" style="color: #45a29e;">Read more</a>
+                    </div>
+                `).join("");
+        }
+
+        function updatePagination(prev, next) {
+            prevPageButton.disabled = !prev;
+            nextPageButton.disabled = !next;
+        }
+
+        prevPageButton.addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--;
+                fetchNews(currentPage);
+            }
+        });
+
+        nextPageButton.addEventListener("click", () => {
+            currentPage++;
+            fetchNews(currentPage);
+        });
+
+        // Initial load
+        fetchNews();
+    </script>
+
+    
+</body>
+
+</html>
