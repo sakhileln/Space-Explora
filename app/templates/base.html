@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Space Nomad{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0b0c10;
+            color: #c5c6c7;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background: #1f2833;
+            color: #66fcf1;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+            background: #1f2833;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        a {
+            color: #45a29e;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    {% block extra_styles %}{% endblock %}
+</head>
+
+<body>
+    <header>
+        <h1>{% block header %}Welcome to Space Nomad!{% endblock %}</h1>
+    </header>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Space Nomad. All Rights Reserved.</p>
+        <a href="/docs">API Documentation</a> | <a href="/">Home</a>
+    </footer>
+</body>
+
+</html>
