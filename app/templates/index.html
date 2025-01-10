@@ -5,22 +5,24 @@
 {% block header %}Welcome to Space Nomad!{% endblock %}
 
 {% block content %}
-<p>Explore SpaceX, NASA launches, and manage space missions efficiently.</p>
+<div style="text-align: center;">
+    <p>Explore SpaceX, NASA launches, and manage space missions efficiently.</p>
 
-<div class="stats">
-    <h2>Space Facts</h2>
-    <p>Total Missions: {{ total_missions }}</p>
-    <p>Completed Missions: {{ completed_missions }}</p>
-    <p>Ongoing Missions: {{ ongoing_missions }}</p>
-    <p>Fun Fact: {{ fun_fact }}</p>
+    <div class="stats" style="display: inline-block; text-align: left;">
+        <h2 style="text-align: center;">Space Facts</h2>
+        <p>Total Missions: {{ total_missions }}</p>
+        <p>Completed Missions: {{ completed_missions }}</p>
+        <p>Ongoing Missions: {{ ongoing_missions }}</p>
+        <p>Fun Fact: {{ fun_fact }}</p>
+    </div>
+
+    <a class="news-link" href="/news" style="
+        display: inline-block;
+        margin-top: 40px;
+        padding: 15px 25px;
+        font-size: 1.2em;
+        color: #fff;
+        background-color: #45a29e;
+        border-radius: 5px;">Read the Latest Space News</a>
 </div>
-
-<a class="news-link" href="/news" style="
-    display: inline-block;
-    margin-top: 40px;
-    padding: 15px 25px;
-    font-size: 1.2em;
-    color: #fff;
-    background-color: #45a29e;
-    border-radius: 5px;">Read the Latest Space News</a>
 {% endblock %}
